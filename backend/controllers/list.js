@@ -11,13 +11,38 @@ module.exports = app => {
         throw msg
     }
 
-    const get = (req, res) => {
+    const get = async (req, res) => {
         const id = req.params.id || null
-        app.db('list_names')
-            .select()
-            .where({ id })
-            .then(lists => res.status(200).json(lists))
-            .catch(err => res.status(500).send(err))
+
+        if (id) {
+            await app.db('list_names')
+                .leftJoin('list_items', 'list_names.id', '=', 'list_items.list_id')
+                .select(
+                    'list_names.id as listId',
+                    'list_names.name as listName',
+                    'list_items.id as itemId',
+                    'list_items.description as itemDesc'
+                )
+                .where('list_names.id', id)
+                .then(results => {
+                    const list = {
+                        id: results[0].listId,
+                        name: results[0].listName,
+                        items: results.filter(row => row.itemId).map(row => ({
+                            id: row.itemId,
+                            description: row.itemDesc
+                        }))
+                    }
+
+                    res.status(200).json(list)
+                })
+                .catch(err => res.status(500).send(err))
+        } else {
+            app.db('list_names')
+                .select()
+                .then(lists => res.status(200).json(lists))
+                .catch(err => res.status(500).send(err))
+        }
     }
 
     const save = async (req, res) => {

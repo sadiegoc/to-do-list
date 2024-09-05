@@ -9,8 +9,9 @@ module.exports = app => {
         .delete(app.controllers.list.remove)
 
     app.route('/to-do/list')
-        .get(app.controllers.item.get)
         .post(app.controllers.item.save)
+        
+    app.route('/to-do/list/:id')
         .patch(app.controllers.item.update)
         .delete(app.controllers.item.remove)
 }
