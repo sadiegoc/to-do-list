@@ -1,10 +1,10 @@
 <template>
-    <aside class="menu">
+    <aside class="menu" v-show="!isMenuHide">
         <div class="container">
             <form class="add" @submit.prevent="add">
                 <input type="text" v-model="listName" placeholder="Add new list">
                 <button type="submit">
-                    <img src="@/assets/imgs/add.png" alt="Add">
+                    <img src="@/assets/imgs/add-1.png" alt="Add">
                 </button>
             </form>
             <ul class="lists">
@@ -23,9 +23,11 @@
 
 <script>
 import list from '@/services/list';
+import { mapState } from 'vuex';
 
 export default {
     name: 'MenuComponent',
+    computed: mapState(['isMenuHide', 'currentList']),
     data: function () {
         return {
             lists: [],
@@ -38,7 +40,7 @@ export default {
         },
         add () {
             if (this.listName) {
-                list.save({ name: this.listName})
+                list.saveList({ name: this.listName})
                     .then(() => {
                         this.loadLists()
                         this.listName = ""
@@ -46,11 +48,14 @@ export default {
                     .catch(err => console.log(err))
             }
         },
-        selectList (id) {
-            this.$store.commit('setList', id)
+        async selectList (id) {
+            await list.getOne(id).then(res => this.$store.commit('setList', res.data)).catch(err => console.log(err))
         },
         remove (id) {
-            list.delete(id).then(() => this.loadLists()).catch(err => console.log(err))
+            list.delete(id)
+                .then(() => this.loadLists())
+                .catch(err => console.log(err))
+            this.$store.commit('setList', [])
         }
     },
     mounted () {

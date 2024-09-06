@@ -32,16 +32,26 @@ module.exports = app => {
 
     const update = async (req, res) => {
         if (!req.params.id) res.status(400).send('Item not given')
-        if (!req.body.description) res.status(400).send('Fields cannot be empty')
         
-        const item = { description: req.body.description }
+        const items = { ...req.body }
         const id = req.params.id
 
-        app.db('list_items')
-            .update(item)
-            .where({ id })
-            .then(_ => res.status(204).send())
-            .catch(err => res.status(500).send(err))
+        await app.db.transaction(async trx => {
+            for (const key in items) {
+                const item = items[key]
+                await trx('list_items')
+                    .where({ id: item.id, list_id: id })
+                    .update({ description: item.description })
+            }
+        })
+        .then(_ => res.status(204).send())
+        .catch(err => res.status(500).send(err))
+            
+        // app.db('list_items')
+        //     .update(item)
+        //     .where({ id })
+        //     .then(_ => res.status(204).send())
+        //     .catch(err => res.status(500).send(err))
     }
 
     const remove = async (req, res) => {

@@ -9,7 +9,7 @@ class List {
         return http.get(`/to-do/${id}`)
     }
 
-    save (data) {
+    saveList (data) {
         return http.post('/to-do', data)
     }
 

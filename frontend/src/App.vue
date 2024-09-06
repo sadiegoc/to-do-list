@@ -1,17 +1,19 @@
 <template>
-    <main class="to-do-list">
+    <main class="to-do-list" :class="{ 'hide-menu': isMenuHide }">
         <Menu></Menu>
         <Content></Content>
     </main>
 </template>
 
 <script>
-import Content from './components/Content.vue';
+import { mapState } from 'vuex';
 import Menu from './components/Menu.vue';
+import Content from './components/Content.vue';
 
 export default {
     name: 'App',
-    components: { Content, Menu }
+    components: { Menu, Content },
+    computed: mapState(['isMenuHide'])
 }
 </script>
 
@@ -37,7 +39,13 @@ export default {
 
     display: grid;
     grid-template-columns: 300px 1fr;
-    grid-template-rows: 1fr 1fr;
-    grid-template-areas: "menu content" "menu content";
+    grid-template-rows: 1fr;
+    grid-template-areas: "menu content";
+}
+
+.to-do-list.hide-menu {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "content";
 }
 </style>

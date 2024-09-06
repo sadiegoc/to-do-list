@@ -2,12 +2,12 @@ import { createStore } from "vuex";
 
 export default createStore({
     state: {
-        currentList: []
+        currentList: [],
+        isMenuHide: false
     },
     mutations: {
-        setList (state, listId) {
-            state.currentList = listId
-            console.log('recebi o id: ', listId)
+        setList (state, list) {
+            state.currentList = list
         }
     }
 })
