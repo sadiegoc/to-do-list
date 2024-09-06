@@ -173,10 +173,14 @@ article {
 }
 
 .save {
-    border: none; outline: none;
+    border: 1px solid transparent; outline: none;
     background-color: #1C0F13;
     padding: 8px 12px; margin: 6px;
     color: white; border-radius: 5px;
     cursor: pointer;
+}
+
+.save:hover {
+    border: 1px solid #eee;
 }
 </style>
