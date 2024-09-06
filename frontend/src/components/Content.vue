@@ -1,7 +1,7 @@
 <template>
     <article class="content">
         <div class="head">
-            <button @click.prevent="this.$store.state.isMenuHide = !isMenuHide">
+            <button class="toggle-menu" @click.prevent="this.$store.state.isMenuHide = !isMenuHide">
                 <img v-if="isMenuHide" src="@/assets/imgs/right-arrow.png" alt="Show">
                 <img v-else src="@/assets/imgs/left-arrow.png" alt="Hide">
             </button>
@@ -13,13 +13,17 @@
             <ul class="list">
                 <li class="item">
                     <input type="text" :disabled="!this.currentList.id" v-model="newItem">
-                    <span @click.prevent="add">
+                    <span class="icon" @click.prevent="add">
                         <img src="@/assets/imgs/add-2.png" alt="Add" width="16px">
                     </span>
                 </li>
                 <li class="item" v-for="item in currentList.items" :key="item.id">
+                    <label class="checkbox">
+                        <input type="checkbox" v-model="item.completed">
+                        <span class="checkmark"></span>
+                    </label>
                     <input type="text" v-model="item.description">
-                    <span @click.prevent="remove(item.id)">
+                    <span class="icon" @click.prevent="remove(item.id)">
                         <img src="@/assets/imgs/trash.png" alt="Delete">
                     </span>
                 </li>
@@ -36,7 +40,7 @@ import { mapState } from 'vuex';
 
 export default {
     name: 'ContentComponent',
-    computed: mapState(['currentList', 'isMenuHide']),
+    computed: mapState(['currentList', 'isMenuHide', 'lists']),
     data: function () {
         return {
             newItem: "",
@@ -58,6 +62,7 @@ export default {
 
                 const listToSave = { name: this.currentList.name }
                 list.update(listToSave, this.currentList.id)
+                    .then(() => this.$store.commit('loadLists'))
                     .catch(err => console.log(err))
             }
         },
@@ -67,7 +72,7 @@ export default {
                 item.save(itemToSave)
                     .then(() => {
                         list.getOne(this.currentList.id).then(res => {
-                            this.$store.commit('setList', res.data)
+                            this.$store.commit('setCurrentList', res.data)
                             this.newItem = ""
                         })
                     })
@@ -129,11 +134,32 @@ article {
     justify-content: space-between; align-items: center;
 }
 
-.item span {
+.item .icon, .item .checkbox {
     padding: 0 5px; cursor: pointer;
 }
 
-.list input {
+.item input[type="checkbox"] {
+    display: none;
+}
+
+.item .checkmark {
+    display: block;
+    cursor: pointer;
+    background-color: transparent;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 1px solid #eee;
+}
+
+.item input[type="checkbox"]:hover ~ .checkmark {
+    background-color: #eee;
+}
+
+.item input[type="checkbox"]:checked ~ .checkmark {
+    background-color: #1C0F13;
+}
+
+.list input[type="text"] {
     border: 1px solid transparent; outline: none;
     padding: 6px 10px; margin: 2px 0;
     border-radius: 5px;
@@ -141,7 +167,7 @@ article {
     background-color: #eee;
 }
 
-.list input:hover {
+.list input[type="text"]:hover {
     border: 1px solid #fff;
 }
 

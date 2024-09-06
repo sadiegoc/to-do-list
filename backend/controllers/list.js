@@ -21,7 +21,8 @@ module.exports = app => {
                     'list_names.id as listId',
                     'list_names.name as listName',
                     'list_items.id as itemId',
-                    'list_items.description as itemDesc'
+                    'list_items.description as itemDesc',
+                    'list_items.completed as itemCompleted'
                 )
                 .where('list_names.id', id)
                 .then(results => {
@@ -30,7 +31,8 @@ module.exports = app => {
                         name: results[0].listName,
                         items: results.filter(row => row.itemId).map(row => ({
                             id: row.itemId,
-                            description: row.itemDesc
+                            description: row.itemDesc,
+                            completed: !!row.itemCompleted
                         }))
                     }
 

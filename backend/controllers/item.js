@@ -16,6 +16,7 @@ module.exports = app => {
 
         try {
             existsOrError(item.description, 'Description not given')
+            existsOrError(item.completed, 'Completed not given')
             existsOrError(item.list_id, 'List not given')
 
             const listAffected = await app.db('list_names').where({ id: item.list_id }).first()
@@ -41,7 +42,10 @@ module.exports = app => {
                 const item = items[key]
                 await trx('list_items')
                     .where({ id: item.id, list_id: id })
-                    .update({ description: item.description })
+                    .update({
+                        description: item.description,
+                        completed: item.completed
+                    })
             }
         })
         .then(_ => res.status(204).send())

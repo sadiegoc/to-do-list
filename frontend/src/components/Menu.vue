@@ -1,5 +1,9 @@
 <template>
     <aside class="menu" v-show="!isMenuHide">
+        <button class="toggle-menu" @click.prevent="this.$store.state.isMenuHide = !isMenuHide">
+            <img v-if="isMenuHide" src="@/assets/imgs/right-arrow.png" alt="Show">
+            <img v-else src="@/assets/imgs/left-arrow.png" alt="Hide">
+        </button>
         <div class="container">
             <form class="add" @submit.prevent="add">
                 <input type="text" v-model="listName" placeholder="Add new list">
@@ -27,17 +31,13 @@ import { mapState } from 'vuex';
 
 export default {
     name: 'MenuComponent',
-    computed: mapState(['isMenuHide', 'currentList']),
+    computed: mapState(['isMenuHide', 'currentList', 'lists']),
     data: function () {
         return {
-            lists: [],
             listName: ""
         }
     },
     methods: {
-        loadLists () {
-            list.getAll().then(response => this.lists = response.data)
-        },
         add () {
             if (this.listName) {
                 list.saveList({ name: this.listName})
@@ -49,17 +49,17 @@ export default {
             }
         },
         async selectList (id) {
-            await list.getOne(id).then(res => this.$store.commit('setList', res.data)).catch(err => console.log(err))
+            await list.getOne(id).then(res => this.$store.commit('setCurrentList', res.data)).catch(err => console.log(err))
         },
         remove (id) {
             list.delete(id)
                 .then(() => this.loadLists())
                 .catch(err => console.log(err))
-            this.$store.commit('setList', [])
+            this.$store.commit('setCurrentList', [])
         }
     },
     mounted () {
-        this.loadLists()
+        this.$store.commit('loadLists')
     }
 }
 </script>
@@ -142,5 +142,27 @@ aside {
     text-align: center;
 
     width: 36px; height: 36px;
+}
+
+.toggle-menu {
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    width: 100%; height: 40px;
+    padding: 0 10px;
+
+    display: none; flex-grow: 1;
+    justify-content: flex-end; align-items: center;
+}
+
+@media (max-width: 600px) {
+    aside {
+        position: absolute;
+        inset: 0; width: 300px;
+    }
+
+    .toggle-menu {
+        display: flex;
+    }
 }
 </style>

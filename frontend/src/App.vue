@@ -48,4 +48,12 @@ export default {
     grid-template-rows: 1fr;
     grid-template-areas: "content";
 }
+
+@media (max-width: 600px) {
+    .to-do-list {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+        grid-template-areas: "content";
+    }
+}
 </style>
