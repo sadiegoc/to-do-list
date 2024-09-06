@@ -157,6 +157,7 @@ article {
 
 .item input[type="checkbox"]:checked ~ .checkmark {
     background-color: #1C0F13;
+    border-color: #1C0F13;
 }
 
 .list input[type="text"] {
