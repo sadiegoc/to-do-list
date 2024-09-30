@@ -22,7 +22,7 @@
                         <input type="checkbox" v-model="item.completed">
                         <span class="checkmark"></span>
                     </label>
-                    <input type="text" v-model="item.description">
+                    <input :class="{ marked: item.completed }" type="text" v-model="item.description">
                     <span class="icon" @click.prevent="remove(item.id)">
                         <img src="@/assets/imgs/trash.png" alt="Delete">
                     </span>
@@ -170,6 +170,10 @@ article {
 
 .list input[type="text"]:hover {
     border: 1px solid #fff;
+}
+
+.marked {
+    text-decoration: line-through;
 }
 
 .save {

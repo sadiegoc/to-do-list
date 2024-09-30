@@ -16,7 +16,6 @@ module.exports = app => {
 
         try {
             existsOrError(item.description, 'Description not given')
-            existsOrError(item.completed, 'Completed not given')
             existsOrError(item.list_id, 'List not given')
 
             const listAffected = await app.db('list_names').where({ id: item.list_id }).first()
